@@ -66,5 +66,6 @@ You've successfully run and modified your React Native App. :partying_face:
 
 
 
-<img width="375" alt="demo" src="https://github.com/user-attachments/assets/0ed540a5-3ee9-4a7c-a231-a926cb7e48e2">
+<img width="368" alt="demo" src="https://github.com/user-attachments/assets/4364ea64-a867-4c1d-b8f3-cac900032888">
+
 

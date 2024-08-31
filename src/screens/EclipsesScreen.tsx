@@ -4,6 +4,7 @@ import Header from '../components/Header';
 import { useTheme } from '../styles/theme';
 import { useNavigation } from '@react-navigation/native';
 import SearchBox from '../components/SearchBox';
+import CustomText from '../components/Customtext';
 
 // Sample data for eclipses with Hijri and Gregorian dates
 const eclipses = [
@@ -11,7 +12,7 @@ const eclipses = [
   { year: 1445, eclipse: 'Lunar Eclipse', hijriDate: '15 Shawwal 1445', gregorianDate: '06 April 2024' },
   { year: 1446, eclipse: 'Solar Eclipse', hijriDate: '27 Ramadan 1446', gregorianDate: '07 March 2025' },
   { year: 1446, eclipse: 'Lunar Eclipse', hijriDate: '10 Shawwal 1446', gregorianDate: '01 May 2025' },
-  // Add more eclipse data with Hijri and Gregorian dates as needed
+ 
 ];
 
 const EclipsesScreen: React.FC = () => {
@@ -59,13 +60,11 @@ const EclipsesScreen: React.FC = () => {
   const handleSearch = (query: string) => {
     console.log('Search button pressed with query:', query);
     const year = parseInt(query, 10);
-    if (!isNaN(year)) {
-      // Update the entered year state
+    if (!isNaN(year)) { 
       setEnteredYear(year);
-      // Filter eclipses based on the entered year
       const filteredEclipses = eclipses.filter(eclipse => eclipse.year === year);
       setEclipsesData(filteredEclipses);
-      setNoEclipses(filteredEclipses.length === 0); // Set noEclipses to true if no eclipses are found
+      setNoEclipses(filteredEclipses.length === 0); 
     } else {
       setEnteredYear(null);
       setEclipsesData([]);
@@ -74,33 +73,35 @@ const EclipsesScreen: React.FC = () => {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
+    <View style={[styles.container, { backgroundColor: colors.darkgray }]}>
       <Header
         title="Eclipses"
         onBack={handleBack}
         onShare={handleShare}
-        layout="other"
+        layout="eclipse"
       />
       <View style={styles.searchBoxContainer}>
         <SearchBox onSearch={handleSearch} />
       </View>
+      <View style={styles.instruction}>
+        <CustomText style={[styles.text, { color: colors.surface }]}>Enter a Hijiri Year 1319-1523</CustomText>
+      </View>
       <View style={styles.content}>
-        <Text style={[styles.text, { color: colors.text }]}>Enter a Hijiri Year 1319-1523</Text>
-        <Text style={[styles.heading, { color: colors.text }]}>
+        <CustomText style={[styles.heading, { color: colors.surface}]}>
           {enteredYear !== null ? `Hijiri Year: ${enteredYear}` : 'Hijiri Year'}
-        </Text>
+        </CustomText>
         <View style={styles.line} />
         {noEclipses ? (
-          <Text style={[styles.noEclipsesText, { color: colors.text }]}>No eclipses found for this year</Text>
+          <CustomText style={[styles.noEclipsesText, { color: colors.surface }]}>No eclipses found for this year</CustomText>
         ) : (
           <FlatList
             data={eclipsesData}
             keyExtractor={(item, index) => `${item.year}-${index}`}
             renderItem={({ item }) => (
               <View style={styles.eclipseContainer}>
-                <Text style={[styles.eclipseText, { color: colors.text }]}>{item.eclipse}</Text>
-                <Text style={[styles.dateText, { color: colors.text }]}>{`Hijri: ${item.hijriDate}`}</Text>
-                <Text style={[styles.dateText, { color: colors.text }]}>{`Gregorian: ${item.gregorianDate}`}</Text>
+                <CustomText style={[styles.eclipseText, { color: colors.surface }]}>{item.eclipse}</CustomText>
+                <CustomText style={[styles.dateText, { color: colors.surface }]}>{`Hijri: ${item.hijriDate}`}</CustomText>
+                <CustomText style={[styles.dateText, { color: colors.surface }]}>{`Gregorian: ${item.gregorianDate}`}</CustomText>
               </View>
             )}
           />
@@ -119,11 +120,18 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     width: '100%',
   },
+  instruction: {
+    marginLeft:25
+ },
   content: {
     flex: 1,
     justifyContent: 'flex-start',
     alignItems: 'flex-start',
     paddingHorizontal: 16,
+    backgroundColor: '#2C2C2C',
+    borderRadius: 20,
+    margin: 20,
+    padding: 5,
   },
   text: {
     fontSize: 18,
@@ -137,7 +145,7 @@ const styles = StyleSheet.create({
   },
   line: {
     height: 1,
-    backgroundColor: 'black', 
+    backgroundColor: '#fff', 
     width: '100%',
   },
   eclipseContainer: {
@@ -147,7 +155,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   dateText: {
-    fontSize: 16,
+    fontSize: 18,
     color: 'gray',
   },
   noEclipsesText: {

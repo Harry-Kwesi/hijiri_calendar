@@ -2,10 +2,15 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity, Share } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { useNavigation } from '@react-navigation/native';
+import { useTheme } from '../styles/theme';
 import Header from '../components/Header';
-import moment from 'moment';
+import moment from 'moment-hijri';
+import CustomTextInput from '../components/CustomTextInput';
+import CustomText from '../components/Customtext';
+
 
 const DateConverterScreen: React.FC = () => {
+  const { colors } = useTheme();
   const [year, setYear] = useState<string>('');
   const [month, setMonth] = useState<string>('');
   const [day, setDay] = useState<string>('');
@@ -13,15 +18,20 @@ const DateConverterScreen: React.FC = () => {
   const [conversionType, setConversionType] = useState<'gregorianToHijri' | 'hijriToGregorian'>('gregorianToHijri');
   const navigation = useNavigation();
 
+  
   const convertDate = () => {
     let date;
     if (conversionType === 'gregorianToHijri') {
-      date = moment(`${year}-${month}-${day}`, 'YYYY-MM-DD').format('iYYYY/iMM/iDD');
+        date = moment(`${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`, 'YYYY-MM-DD')
+            .format('iYYYY/iMM/iDD');
     } else {
-      date = moment(`${year}-${month}-${day}`, 'iYYYY/iMM/iDD').format('YYYY-MM-DD');
+        date = moment(`${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`, 'iYYYY/iMM/iDD')
+            .format('YYYY-MM-DD');
+        console.log("Converted to Gregorian:", date);
     }
     setResult(date);
-  };
+};
+
 
   const handleBack = () => {
     console.log('Back button pressed');
@@ -40,19 +50,19 @@ const DateConverterScreen: React.FC = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.darkgray }]}>
       <Header
         title="Date Converter"
         onBack={handleBack}
         onShare={handleShare}
         layout="other"
       />
-      <View style={styles.conversionType}>
+      <View style={[styles.conversionType, {backgroundColor: colors.background}]}>
         <TouchableOpacity
           style={styles.radioButton}
           onPress={() => setConversionType('gregorianToHijri')}
         >
-          <Text style={styles.radioLabel}>Gregorian to Hijri</Text>
+          <Text style={[styles.radioLabel, {color: colors.surface}]}>Gregorian to Hijri</Text>
           <View style={conversionType === 'gregorianToHijri' ? styles.selected : styles.unselected} />
         </TouchableOpacity>
         
@@ -62,14 +72,14 @@ const DateConverterScreen: React.FC = () => {
           style={styles.radioButton}
           onPress={() => setConversionType('hijriToGregorian')}
         >
-          <Text style={styles.radioLabel}>Hijri to Gregorian</Text>
+          <Text style={[styles.radioLabel, {color: colors.surface}]}>Hijri to Gregorian</Text>
           <View style={conversionType === 'hijriToGregorian' ? styles.selected : styles.unselected} />
         </TouchableOpacity>
       </View>
       
-      {/* Input Section */}
+      
       <View style={styles.inputContainer}>
-        <TextInput
+        <CustomTextInput
           style={styles.input}
           placeholder="Year"
           keyboardType="numeric"
@@ -98,11 +108,12 @@ const DateConverterScreen: React.FC = () => {
         </Picker>
       </View>
 
-      {/* Convert Button */}
-      <Button title="GO" onPress={convertDate} color="#007BFF" />
-
-      {/* Result Section */}
-      {result && <Text style={styles.result}>Converted Date: {result}</Text>}
+      
+      <TouchableOpacity style={styles.button} onPress={convertDate}>
+      <CustomText style={[styles.buttonText, {color: colors.surface}]}>GO</CustomText>
+      </TouchableOpacity>
+    
+      {result && <CustomText style={[styles.result, {color: colors.surface}]}>Converted Date: {result}</CustomText>}
     </View>
   );
 };
@@ -110,15 +121,13 @@ const DateConverterScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
-    backgroundColor: '#fff',
   },
   conversionType: {
     marginBottom: 20,
-    backgroundColor: '#333',
     borderRadius: 10,
-    padding: 10,
+    padding: 5,
     marginTop: 30,
+    marginHorizontal: 5
   },
   radioButton: {
     flexDirection: 'row',
@@ -127,7 +136,6 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   radioLabel: {
-    color: '#fff',
     fontSize: 16,
   },
   selected: {
@@ -135,47 +143,67 @@ const styles = StyleSheet.create({
     height: 20,
     borderRadius: 10,
     borderWidth: 2,
-    borderColor: '#007BFF',
-    backgroundColor: '#007BFF',
+    borderColor: '#D502DC',
+    backgroundColor: '#D502DC',
   },
   unselected: {
     width: 20,
     height: 20,
     borderRadius: 10,
     borderWidth: 2,
-    borderColor: '#007BFF',
+    borderColor: '#D502DC',
   },
   divider: {
     height: 1,
-    backgroundColor: '#777',
+    backgroundColor: '#fff',
     marginVertical: 10,
   },
   inputContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 20,
+    paddingHorizontal:5,
+    paddingVertical:10
   },
   input: {
     flex: 1,
     backgroundColor: '#fff',
-    color: '#000',
+    color: '#161616',
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 5,
-    marginRight: 10,
+    marginRight: 5,
+    fontSize: 18,
   },
   picker: {
     flex: 1,
     backgroundColor: '#fff',
-    color: '#000',
+    color: '#161616',
     height: 50, // Adjust as needed
     marginRight: 10,
+    fontSize: 16,
+  },
+  button: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 40,
+    backgroundColor: '#D502DC',
+    borderRadius: 8,
+  },
+  buttonText: {
+    fontSize: 18,
   },
   result: {
     color: '#000',
-    fontSize: 18,
+    fontSize: 20,
     textAlign: 'center',
     marginTop: 20,
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    backgroundColor: '#2C2C2C',
+    borderRadius: 25,
+    padding: 20,
+    alignSelf: 'center', 
   },
 });
 

@@ -2,6 +2,10 @@ import React, { useState } from 'react';
 import { View, TextInput, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useTheme } from '../styles/theme';
+import CustomTextInput from './CustomTextInput';
+import CustomText from './Customtext';
+
+
 
 interface SearchBoxProps {
   onSearch: (query: string) => void;
@@ -19,8 +23,8 @@ const SearchBox: React.FC<SearchBoxProps> = ({ onSearch }) => {
     <View style={styles.searchContainer}>
       <View style={[styles.inputContainer, { borderColor: colors.border }]}>
         <Icon name="search" size={20} color={colors.placeholder} style={styles.icon} />
-        <TextInput
-          style={[styles.input, { color: colors.text }]}
+        <CustomTextInput
+          style={ { color: colors.surface }}
           placeholder="Search..."
           placeholderTextColor={colors.placeholder}
           value={searchText}
@@ -28,10 +32,10 @@ const SearchBox: React.FC<SearchBoxProps> = ({ onSearch }) => {
         />
       </View>
       <TouchableOpacity
-        style={[styles.button, { backgroundColor: colors.primary }]}
+        style={[styles.button, { backgroundColor: colors.tins }]}
         onPress={handleSearch}
       >
-        <Text style={styles.buttonText}>Go</Text>
+        <CustomText style={[styles.buttonText, {color: colors.surface}]}>GO</CustomText>
       </TouchableOpacity>
     </View>
   );
@@ -47,28 +51,29 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flex: 1,
     alignItems: 'center',
-    borderWidth: 1,
-    borderRadius: 8,
+    height: 50,
+    borderRadius: 25,
     paddingHorizontal: 10,
     marginRight: 10,
+    backgroundColor: '#2C2C2C',
   },
   icon: {
     marginRight: 10,
   },
   input: {
     flex: 1,
-    height: 40,
+    height: 50,
   },
   button: {
     justifyContent: 'center',
     alignItems: 'center',
     height: 40,
+    backgroundColor: '#D502DC',
     width: 80,
     borderRadius: 8,
   },
   buttonText: {
-    color: 'white',
-    fontSize: 16,
+    fontSize: 18,
   },
 });
 

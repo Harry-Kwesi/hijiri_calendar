@@ -7,6 +7,8 @@ import DatePicker from 'react-native-date-picker';
 import moment from 'moment-hijri';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { Share } from 'react-native';
+import CustomText from '../components/Customtext';
+import CustomTextInput from '../components/CustomTextInput';
 
 const SearchScreen: React.FC = () => {
   const { colors } = useTheme();
@@ -14,7 +16,7 @@ const SearchScreen: React.FC = () => {
   const [open, setOpen] = useState<boolean>(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [dateInput, setDateInput] = useState<string>('');
-  const [result, setResult] = useState<string>('');
+  const [result, setResult] = useState<string>('Please choose or enter a valid Gregorian date in YYYY-MM-DD format.');
 
   const gregorianToHijri = (date: Date): string => {
     const gregorianDate = moment(date).format('YYYY-MM-DD');
@@ -28,7 +30,7 @@ const SearchScreen: React.FC = () => {
     setDateInput(moment(date).format('YYYY-MM-DD'));
     setOpen(false);
     const hijriDate = gregorianToHijri(date);
-    setResult(`Gregorian ${moment(date).format('YYYY-MM-DD')} -> ${hijriDate}`);
+    setResult(`Gregorian ${moment(date).format('YYYY-MM-DD')} converts to \n${hijriDate}`);
   };
 
   const handleInputChange = (text: string) => {
@@ -36,7 +38,7 @@ const SearchScreen: React.FC = () => {
     const [year, month, day] = text.split('-').map(Number);
     if (year && month && day) {
       const hijriDate = gregorianToHijri(new Date(year, month - 1, day));
-      setResult(`Gregorian ${text} -> ${hijriDate}`);
+      setResult(`Gregorian ${text} converts to ${hijriDate}`);
     } else {
       setResult('Please enter a valid Gregorian date in YYYY-MM-DD format.');
     }
@@ -74,29 +76,37 @@ const SearchScreen: React.FC = () => {
   
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
+    <View style={[styles.container, { backgroundColor: colors.darkgray }]}>
       <Header
         title="Search"
         onBack={handleBack}
-        onShare={handleShare} // Call handleShare for sharing functionality
-        layout="other"
+        onShare={handleShare} 
+        layout="search"
       />
       <View style={styles.content}>
         <View style={styles.inputContainer}>
           <TouchableOpacity onPress={() => setOpen(true)} style={styles.iconContainer}>
-            <Icon name="calendar-outline" size={24} color={colors.text} />
+            <Icon name="calendar-outline" size={24} color={colors.surface} />
           </TouchableOpacity>
-          <TextInput
-            style={[styles.input, { color: colors.text }]}
-            placeholder="Enter Gregorian date (YYYY-MM-DD)"
-            placeholderTextColor="#ccc"
+          <CustomTextInput
             value={dateInput}
             onChangeText={handleInputChange}
+            placeholder="Enter Gregorian date (YYYY-MM-DD)"
+            placeholderTextColor="#ccc"
+            style={{ color: colors.surface }}
             keyboardType="numeric"
           />
         </View>
-        <Text style={[styles.text, { color: colors.text }]}>Result:</Text>
-        <Text style={[styles.result, { color: colors.text }]}>{result}</Text>
+
+        <View style={styles.result}>
+         <CustomText style={[styles.text, { color: colors.surface, fontWeight: 'bold' }]}>
+               Details{'\n'}
+        </CustomText>
+        <CustomText style={[styles.subText, { color: colors.surface }]}>
+               {result}
+        </CustomText>
+        </View>
+
         <DatePicker
           modal
           open={open}
@@ -118,15 +128,17 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-start',
     alignItems: 'flex-start',
-    paddingHorizontal: 16,
+    marginTop: 20,
+    paddingHorizontal: 15
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     width: '100%',
-    borderWidth: 1,
+    padding:5,
     borderColor: '#ccc',
-    borderRadius: 4,
+    borderRadius: 25,
+    backgroundColor: '#2C2C2C'
   },
   input: {
     flex: 1,
@@ -136,14 +148,23 @@ const styles = StyleSheet.create({
   iconContainer: {
     padding: 10,
   },
-  text: {
-    fontSize: 18,
-    marginTop: 10,
-  },
   result: {
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    backgroundColor: '#2C2C2C',
+    borderRadius: 20,
+    marginTop:20,
+    padding: 10,
+    alignSelf: 'center', 
+  },
+  text: {
+    textAlign: 'left',
+    width: '100%',
     fontSize: 24,
-    marginTop: 20,
-    fontWeight: 'bold',
+  },
+  subText: {
+    fontSize: 20,
+    marginBottom: 20,
   },
 });
 

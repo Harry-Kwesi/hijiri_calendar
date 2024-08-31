@@ -9,13 +9,11 @@ const MoonArticleScreen = () => {
 
 
   const handleBack = () => {
-    // Implement your back navigation functionality here
     console.log('Back button pressed');
     navigation.goBack();
   };
 
   const handleShare = () => {
-    // Implement your share functionality here
     console.log('Share icon pressed');
   };
 
@@ -49,7 +47,7 @@ const MoonArticleScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff', // Background color
+    backgroundColor: '#fff',
   },
   backButton: {
     padding: 8,
@@ -66,13 +64,13 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   button: {
-    backgroundColor: '#2B2B2B', // Dark background for the buttons
+    backgroundColor: '#2B2B2B', 
     padding: 16,
     marginBottom: 10,
     borderRadius: 4,
   },
   buttonText: {
-    color: '#fff', // White text
+    color: '#fff', 
     fontSize: 16,
   },
 });

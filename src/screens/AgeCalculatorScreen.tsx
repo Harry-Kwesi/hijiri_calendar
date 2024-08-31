@@ -2,9 +2,13 @@ import React, { useState } from 'react';
 import { View, Text, Button, StyleSheet, TextInput, TouchableOpacity, Alert, Share} from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { useNavigation } from '@react-navigation/native';
+import { useTheme } from '../styles/theme';
 import Header from '../components/Header';
+import CustomTextInput from '../components/CustomTextInput';
+import CustomText from '../components/Customtext';
 
 const AgeCalculator = () => {
+  const { colors } = useTheme();
   const [year, setYear] = useState<number | null>(null);
   const [month, setMonth] = useState<number | null>(null);
   const [day, setDay] = useState<number | null>(null);
@@ -67,16 +71,16 @@ const AgeCalculator = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.darkgray }]}>
       <Header
         title="Age Calculator"
         onBack={handleBack}
         onShare={handleShare}
         layout="other"
       />
-      <View style={styles.inputRow}>
-        <TextInput
-          style={styles.inputBox}
+      <View style={styles.inputContainer}>
+        <CustomTextInput
+          style={styles.input}
           placeholder="Year"
           keyboardType="numeric"
           value={year !== null ? year.toString() : ''}
@@ -84,7 +88,7 @@ const AgeCalculator = () => {
         />
         <Picker
           selectedValue={month}
-          style={styles.inputBox}
+          style={styles.input}
           onValueChange={(itemValue) => setMonth(itemValue)}
         >
           <Picker.Item label="Month" value={null} />
@@ -94,7 +98,7 @@ const AgeCalculator = () => {
         </Picker>
         <Picker
           selectedValue={day}
-          style={styles.inputBox}
+          style={styles.input}
           onValueChange={(itemValue) => setDay(itemValue)}
         >
           <Picker.Item label="Day" value={null} />
@@ -102,15 +106,18 @@ const AgeCalculator = () => {
             <Picker.Item key={day} label={day.toString()} value={day} />
           ))}
         </Picker>
-        <TouchableOpacity style={styles.goButton} onPress={calculateAge}>
-          <Text style={styles.goButtonText}>GO</Text>
-        </TouchableOpacity>
       </View>
+      <CustomText style={[styles.instruction, { color: colors.surface }]}>Enter your Date in Gregorian Format</CustomText>
 
-      <Text style={styles.instruction}>Enter your Date in Gregorian Format</Text>
+
+      <TouchableOpacity style={styles.button} onPress={calculateAge}>
+          <CustomText style={[styles.buttonText, {color: colors.surface}]}>GO</CustomText>
+        </TouchableOpacity>
+
+      
       
       {age && (
-        <Text style={styles.result}>{age}</Text>
+        <CustomText style={[styles.result, {color: colors.surface}]}>{age}</CustomText>
       )}
     </View>
   );
@@ -122,41 +129,57 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff', 
     paddingTop: 20,
   },
-  inputRow: {
+  inputContainer: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 20,
-    paddingHorizontal: 20,
+    paddingHorizontal: 5,
+    paddingVertical:10
   },
-  inputBox: {
+  input: {
     flex: 1,
     height: 40,
     backgroundColor: '#fff',
     borderRadius: 5,
     marginHorizontal: 5,
     paddingHorizontal: 10,
+    paddingVertical: 5,
+    color: '#161616',
+    marginRight: 5,
+    fontSize: 18,
   },
-  goButton: {
-    backgroundColor: '#007BFF',
+  button: {
     paddingVertical: 10,
     paddingHorizontal: 20,
-    borderRadius: 5,
+    borderRadius: 8,
     marginLeft: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 40,
+    backgroundColor: '#D502DC',
   },
-  goButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
+  buttonText: {
+    fontSize: 18,
+  },
+  text: {
+    fontSize: 16,
+   
   },
   instruction: {
-    color: '#000',
     textAlign: 'center',
-    marginBottom: 20,
+    marginBottom:25
   },
   result: {
-    color: '#000',
     textAlign: 'center',
-    fontSize: 18,
     marginTop: 20,
+    fontSize: 20,
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    backgroundColor: '#2C2C2C',
+    borderRadius: 25,
+    padding: 20,
+    alignSelf: 'center', 
   },
 });
 

@@ -4,6 +4,8 @@ import Header from '../components/Header';
 import { useTheme } from '../styles/theme';
 import { useNavigation } from '@react-navigation/native';
 import SearchBox from '../components/SearchBox';
+import CustomText from '../components/Customtext';
+
 
 // Sample data for Islamic events with Hijri and Gregorian dates
 const islamicEvents = [
@@ -13,7 +15,7 @@ const islamicEvents = [
   { year: 1446, event: 'Ramadan', hijriDate: '1 Ramadan 1446', gregorianDate: '11 March 2025' },
   { year: 1446, event: 'Eid al-Fitr', hijriDate: '1 Shawwal 1446', gregorianDate: '30 April 2025' },
   { year: 1446, event: 'Eid al-Adha', hijriDate: '10 Dhu al-Hijjah 1446', gregorianDate: '27 June 2025' },
-  // Add more events with Hijri and Gregorian dates as needed
+
 ];
 
 const EventsScreen: React.FC = () => {
@@ -58,15 +60,12 @@ const EventsScreen: React.FC = () => {
   };
   
   const handleSearch = (query: string) => {
-    console.log('Search button pressed with query:', query);
     const year = parseInt(query, 10);
     if (!isNaN(year)) {
-      // Update the entered year state
       setEnteredYear(year);
-      // Filter events based on the entered Hijri year
       const filteredEvents = islamicEvents.filter(event => event.year === year);
       setEvents(filteredEvents);
-      setNoEvents(filteredEvents.length === 0); // Set noEvents to true if no events are found
+      setNoEvents(filteredEvents.length === 0); 
     } else {
       setEnteredYear(null);
       setEvents([]);
@@ -75,33 +74,35 @@ const EventsScreen: React.FC = () => {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
+    <View style={[styles.container, { backgroundColor: colors.darkgray }]}>
       <Header
         title="Events"
         onBack={handleBack}
         onShare={handleShare}
-        layout="other"
+        layout="events"
       />
       <View style={styles.searchBoxContainer}>
         <SearchBox onSearch={handleSearch} />
       </View>
+      <View style={styles.instruction}>
+        <CustomText style={[styles.text, { color: colors.surface }]}>Enter a Hijiri Year 1319-1523</CustomText>
+      </View>
       <View style={styles.content}>
-        <Text style={[styles.text, { color: colors.text }]}>Enter a Hijiri Year 1319-1523</Text>
-        <Text style={[styles.heading, { color: colors.text }]}>
+        <CustomText style={[styles.heading, { color: colors.surface}]}>
           {enteredYear !== null ? `Hijiri Year: ${enteredYear}` : 'Hijiri Year'}
-        </Text>
+        </CustomText>
         <View style={styles.line} />
         {noEvents ? (
-          <Text style={[styles.noEventsText, { color: colors.text }]}>No events found for this year</Text>
+          <CustomText style={[styles.noEventsText, { color: colors.surface }]}>No events found for this year</CustomText>
         ) : (
           <FlatList
             data={events}
             keyExtractor={(item, index) => `${item.year}-${index}`}
             renderItem={({ item }) => (
               <View style={styles.eventContainer}>
-                <Text style={[styles.eventText, { color: colors.text }]}>{item.event}</Text>
-                <Text style={[styles.dateText, { color: colors.text }]}>{`Hijri: ${item.hijriDate}`}</Text>
-                <Text style={[styles.dateText, { color: colors.text }]}>{`Gregorian: ${item.gregorianDate}`}</Text>
+                <CustomText style={[styles.eventText, { color: colors.surface }]}>{item.event}</CustomText>
+                <CustomText style={[styles.dateText, { color: colors.surface }]}>{`Hijri: ${item.hijriDate}`}</CustomText>
+                <CustomText style={[styles.dateText, { color: colors.surface }]}>{`Gregorian: ${item.gregorianDate}`}</CustomText>
               </View>
             )}
           />
@@ -120,11 +121,18 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     width: '100%',
   },
+  instruction: {
+     marginLeft:25
+  },
   content: {
     flex: 1,
     justifyContent: 'flex-start',
     alignItems: 'flex-start',
     paddingHorizontal: 16,
+    backgroundColor: '#2C2C2C',
+    borderRadius: 20,
+    margin: 20,
+    padding: 5,
   },
   text: {
     fontSize: 18,
@@ -138,7 +146,7 @@ const styles = StyleSheet.create({
   },
   line: {
     height: 1,
-    backgroundColor: 'black', 
+    backgroundColor: '#fff', 
     width: '100%',
   },
   eventContainer: {
@@ -148,7 +156,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   dateText: {
-    fontSize: 16,
+    fontSize: 18,
     color: 'gray',
   },
   noEventsText: {

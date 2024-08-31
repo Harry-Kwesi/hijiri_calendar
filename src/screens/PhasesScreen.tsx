@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList, Share } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Header from '../components/Header';
+import { useTheme } from '../styles/theme';
 import moment from 'moment-hijri';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import CustomText from '../components/Customtext';
 
 const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
@@ -34,6 +36,7 @@ function getMoonPhase(date: moment.Moment): string {
 }
 
 const PhasesScreen: React.FC = () => {
+  const { colors } = useTheme();
   const [currentMonth, setCurrentMonth] = useState(moment().startOf('iMonth'));
   const [selectedDate, setSelectedDate] = useState<moment.Moment | null>(null);
   const navigation = useNavigation();
@@ -42,9 +45,7 @@ const PhasesScreen: React.FC = () => {
     if (selectedDate) {
       const timer = setTimeout(() => {
         setSelectedDate(null);
-      }, 5000); // 30 seconds
-
-      // Cleanup the timer if the component unmounts or the selectedDate changes
+      }, 5000); 
       return () => clearTimeout(timer);
     }
   }, [selectedDate]);
@@ -60,7 +61,6 @@ const PhasesScreen: React.FC = () => {
       dates.push(day.clone());
       day.add(1, 'day');
     }
-
     return dates;
   };
 
@@ -96,32 +96,28 @@ const PhasesScreen: React.FC = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.darkgray }]}>
       <Header
         title="Events"
         onBack={handleBack}
         onShare={handleShare}
-        layout="other"
+        layout="phases"
       />
-      <View style={styles.header}>
-        <Text style={styles.monthText}>
-          {currentMonth.format('iMMMM iYYYY')} / {currentGregorianMonth}
-        </Text>
-        <View style={styles.navigation}>
-          <TouchableOpacity onPress={() => setCurrentMonth(currentMonth.clone().subtract(1, 'iMonth'))}>
-            <Ionicons name="chevron-back-outline" size={24} color="#fff" />
+      <View style={styles.buttonContainer}>
+      <TouchableOpacity onPress={() => setCurrentMonth(currentMonth.clone().subtract(1, 'iMonth'))} style={styles.button}>
+            <CustomText style={[styles.buttonText, { color: colors.darkgray }]}>Previous</CustomText>
+      </TouchableOpacity>
+         <CustomText style={[styles.monthText, { color: colors.surface }]}>{currentMonth.format('iMMMM iYYYY')}{'\n'} {currentGregorianMonth}</CustomText>
+      <TouchableOpacity onPress={() => setCurrentMonth(currentMonth.clone().add(1, 'iMonth'))} style={styles.button}>
+            <CustomText style={[styles.buttonText, { color: colors.darkgray }]}>Next</CustomText>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => setCurrentMonth(currentMonth.clone().add(1, 'iMonth'))}>
-            <Ionicons name="chevron-forward-outline" size={24} color="#fff" />
-          </TouchableOpacity>
-        </View>
       </View>
 
-      <Text style={styles.todayDate}>Today's Hijri Date: {today.locale('en').format('iD iMMMM iYYYY')}</Text>
+      <CustomText style={[styles.todayDate, { color: colors.surface}]}>Today's Hijri Date: {today.locale('en').format('iD iMMMM iYYYY')}</CustomText>
 
       <View style={styles.weekHeader}>
         {daysOfWeek.map(day => (
-          <Text key={day} style={styles.dayHeader}>{day}</Text>
+          <CustomText key={day} style={[styles.dayHeader, { color: colors.surface}]}>{day}</CustomText>
         ))}
       </View>
 
@@ -130,6 +126,7 @@ const PhasesScreen: React.FC = () => {
         renderItem={({ item }) => {
           const isToday = item.isSame(today, 'day');
           const isSelected = selectedDate && item.isSame(selectedDate, 'day');
+
           return (
             <TouchableOpacity onPress={() => handleDatePress(item)} style={styles.dateCellWrapper}>
               <View style={[
@@ -137,9 +134,9 @@ const PhasesScreen: React.FC = () => {
                 isToday && styles.todayCell, 
                 isSelected && styles.selectedCell
               ]}>
-                <Text style={styles.dateText}>{item.locale('en').format('iD')}</Text>
-                <Text style={styles.moonPhaseText}>{getMoonPhase(item)}</Text>
-                <Text style={styles.gregorianDateText}>{item.locale('en').format('D-M')}</Text>
+                <CustomText style={[styles.dateText, { color: colors.surface}]}>{item.locale('en').format('iD')}</CustomText>
+                <CustomText style={[styles.moonPhaseText,{ color: colors.surface}]}>{getMoonPhase(item)}</CustomText>
+                <CustomText style={[styles.gregorianDateText,{ color: colors.surface}]}>{item.locale('en').format('D-M')}</CustomText>
               </View>
             </TouchableOpacity>
           );
@@ -149,10 +146,10 @@ const PhasesScreen: React.FC = () => {
       />
 
       {selectedDate && (
-        <View style={styles.selectedDateContainer}>
-          <Text style={styles.selectedDateText}>
+        <View style={[styles.selectedDateContainer, { backgroundColor: colors.background}]}>
+          <CustomText style={[styles.selectedDateText, { color: colors.surface}]}>
             Selected Date: {selectedDate.locale('en').format('iD iMMMM iYYYY')} / {selectedDate.locale('en').format('D MMMM YYYY')}
-          </Text>
+          </CustomText>
         </View>
       )}
     </View>
@@ -162,27 +159,45 @@ const PhasesScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
-    backgroundColor: '#121212', // Dark background color
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 16,
+    padding:10
   },
   monthText: {
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: 'bold',
-    color: '#ffffff', // White text color
+    marginTop:10
   },
-  navigation: {
+  buttonContainer: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginTop: 20,
+    paddingHorizontal: 10,
+  },
+  button: {
+    backgroundColor: 'white', 
+    borderRadius: 20, 
+    paddingVertical: 10,
+    paddingHorizontal: 20, 
+    alignItems: 'center',
+    justifyContent: 'center', 
+    margin: 10, 
+    borderWidth: 1, 
+    borderColor: '#ddd', 
+  },
+  buttonText: {
+    fontSize: 16,
   },
   todayDate: {
     fontSize: 16,
-    marginBottom: 16,
-    color: '#ffffff', // White text color
+    fontWeight: 'bold',
+    marginVertical:20,
+    paddingHorizontal: 20,
   },
   weekHeader: {
     flexDirection: 'row',
@@ -193,47 +208,42 @@ const styles = StyleSheet.create({
     width: '14.28%',
     textAlign: 'center',
     fontWeight: 'bold',
-    color: '#ffffff', // White text color
   },
   dateCellWrapper: {
     width: '14.28%',
-    marginVertical: 8, // Adds space above and below each cell
+    marginVertical: 8, 
   },
   dateCell: {
     height: 60,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 8,
+    borderRadius: 5,
   },
   todayCell: {
-    backgroundColor: '#4caf50', // Highlight color for today
+    backgroundColor: '#D502DC',
   },
   selectedCell: {
-    backgroundColor: '#2196f3', // Highlight color for selected date
+    backgroundColor: '#2C2C2C', 
+    borderRadius: 5,
   },
   dateText: {
-    fontSize: 14,
-    color: '#ffffff', // White text color
+    fontSize: 14, 
   },
   moonPhaseText: {
     fontSize: 12,
-    marginTop: 4,
-    color: '#ffffff', // White text color
+    marginTop: 4, 
   },
   gregorianDateText: {
     fontSize: 12,
     marginTop: 2,
-    color: '#ffffff', // White text color
   },
   selectedDateContainer: {
-    marginTop: 16,
+    marginBottom:20,
     padding: 8,
-    backgroundColor: '#333333',
     borderRadius: 8,
   },
   selectedDateText: {
     fontSize: 16,
-    color: '#ffffff', // White text color
     textAlign: 'center',
   },
 });
